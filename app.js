@@ -4,11 +4,11 @@ let canvasWidth = 1000;
 let canvasHeight = 600;
 // test
 let img;
+let testSprite;
 // mouse interaction
 let draggedSprite;
 // modify into json in future
 let cubeSprite;
-let cubeSprite_2;
 const cubeSpriteData = [
   {
     layer:1,
@@ -16,12 +16,12 @@ const cubeSpriteData = [
     animation:[
       {
         animationLabel: "spin",
-        filePath:["assets/cube_spin_back_00001.png","assets/cube_spin_back_00012.png"]
+        filePath:["assets/cube_back_spin_00001.png","assets/cube_back_spin_00012.png"]
       },{
         animationLabel: "transform",
-        filePath:["assets/cube_transform_front_00001.png","assets/cube_transform_front_00010.png"]
+        filePath:["assets/cube_back_transform_00001.png","assets/cube_back_transform_00010.png"]
       }
-    ],
+    ]
     
   },
   {
@@ -31,7 +31,12 @@ const cubeSpriteData = [
       {
         animationLabel: "nutral",
         filePath:["assets/cube_heart_nutral_00001.png","assets/cube_heart_nutral_00004.png"]
+      },
+      {
+        animationLabel: "transform",
+        filePath:["assets/cube_heart_transform_00001.png","assets/cube_heart_transform_00010.png"]
       }
+
     ]
     
   },
@@ -41,10 +46,12 @@ const cubeSpriteData = [
     animation:[
       {
         animationLabel: "spin",
-        filePath:["assets/cube_spin_front_00001.png","assets/cube_spin_front_00012.png"]
+        filePath:["assets/cube_front_spin_00001.png","assets/cube_front_spin_00012.png"]
+      },{
+        animationLabel: "transform",
+        filePath:["assets/cube_front_transform_00001.png","assets/cube_front_transform_00010.png"]
       }
     ]
-    
   },
   
 ]
@@ -53,21 +60,15 @@ const cubeSpriteData = [
 
 function preload(){
 
-    img = loadImage("assets/cube_transform_front_00001.png");
-    cubeSprite_2 = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);
-    cubeSprite_2.addAnimation("transform","assets/cube_transform_front_00001.png","assets/cube_transform_front_00010.png");
-    // cubeSprite_2.addImage("bruh",img);
-    // cubeSprite_2.changeImage("bruh");
-    cubeSprite_2.animation.frameDelay = 60;
-
-
+    
+  // createTestSprite();
 
 
 
 
     // Create cubeSprite
     cubeSprite = new Group();
-    // create sub sprites
+    // iterate through cubeSpriteData to create sub sprites
     for( let i = 1; i <= 3; i++){
       let c = cubeSpriteData[i-1];
       
@@ -127,9 +128,44 @@ function draw() {
       )
     }
     cubeSprite[0].debug = mouseIsPressed;
-    // cubeSprite_2.degug = mouseIsPressed;
+    
     drawSprites(cubeSprite);
-    // drawSprite(cubeSprite_2);
+
+    if(testSprite){
+      testSprite.degug = mouseIsPressed;
+      drawSprite(testSprite);
+    }
+
 }
 
  
+
+
+
+
+
+//        function for test purposes
+
+
+function createTestSprite(){
+      // img = loadImage("assets/cube_crack_front_00004.png");
+      testSprite = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);
+      testSprite.addAnimation("transform","assets/cube_back_transform_00001.png","assets/cube_back_transform_00010.png");
+      // testSprite.addImage("bruh",img);
+      // testSprite.changeImage("bruh");
+      testSprite.animation.frameDelay = 10;
+
+}
+
+
+function keyPressed() {
+
+  // console.log(cubeSprite);
+
+  cubeSprite.forEach((sprite)=>{
+    console.log(sprite);
+    sprite.changeAnimation("transform");
+    sprite.animation.frameDelay = 10;
+  });
+
+}
