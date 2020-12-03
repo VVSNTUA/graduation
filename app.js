@@ -21,6 +21,9 @@ const cubeSpriteData = [
       },{
         animationLabel: "transform",
         filePath:["assets/cube_back_transform_00001.png","assets/cube_back_transform_00010.png"]
+      },{
+        animationLabel: "neutral",
+        filePath:["assets/cube_back_neutral_00001.png","assets/cube_back_neutral_00004.png"]
       }
     ]
     
@@ -30,8 +33,8 @@ const cubeSpriteData = [
     name:"heart",
     animation:[
       {
-        animationLabel: "nutral",
-        filePath:["assets/cube_heart_nutral_00001.png","assets/cube_heart_nutral_00004.png"]
+        animationLabel: "neutral",
+        filePath:["assets/cube_heart_neutral_00001.png","assets/cube_heart_neutral_00004.png"]
       },
       {
         animationLabel: "transform",
@@ -54,6 +57,9 @@ const cubeSpriteData = [
       },{
         animationLabel: "crack",
         filePath:["assets/cube_front_crack_00001.png","assets/cube_front_crack_00004.png"]
+      },{
+        animationLabel: "neutral",
+        filePath:["assets/cube_front_neutral_00001.png","assets/cube_front_neutral_00004.png"]
       }
     ]
   },
@@ -64,11 +70,6 @@ const cubeSpriteData = [
 
 function preload(){
 
-    
-  // createTestSprite();
-
-
-
 
     // Create cubeSprite
     cubeSprite = new Group();
@@ -76,9 +77,9 @@ function preload(){
     for( let i = 1; i <= 3; i++){
       let c = cubeSpriteData[i-1];
       
-      let s = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);  // sub sprite
+      let s = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);  // sub sprite 300*300
 
-      // add animations
+      // add animations to sub sprites
       for (let j = 0; j < c.animation.length; j++){
         let anim = c.animation[j];
         let label = anim.animationLabel;
@@ -86,7 +87,6 @@ function preload(){
         s.addAnimation( label, files[0], files[files.length - 1]);
       }
       // rescale
-      s.scale = 1;
       s.addToGroup(cubeSprite);
     }
 
@@ -100,6 +100,7 @@ function preload(){
     // will stop playing
 
     cubeSprite[0].onMousePressed = function(){
+
         if(draggedSprite == null){
           draggedSprite = cubeSprite;
         }
@@ -121,7 +122,6 @@ function setup() {
   
 function draw() {
     background(220,220,220); 
-    // image(img,530,530);
 
 
     if(draggedSprite != null){
@@ -143,28 +143,33 @@ function draw() {
 }
 
  
+// * *  不同階段要處理的事
+// * *  (1) 方塊正在spin : 唯一可做的事情就是按方塊停止spin
+// * *
+// * *                  => 方塊播至最後最後一個畫格後  =>撥放 (2)方塊neutral
+// * *                  
+// * *  (2) 方塊neutral : 有三件事情可以做，拖拉、點擊和滾輪
+// * *                  
+// * *             拖拉 => 檢查滑鼠有拖行，若有，根據方塊裂痕的狀態決定跟隨的距離。滑鼠放開時回歸原位
+// * *             點擊 => 滑鼠沒有拖行時
+// * *                      -> 每次點擊，方塊反光一次
+// * *                      -> 數次點擊，方塊產生裂痕 
+// * * 
+// * * 
+// * * 
+// * * 
+// * * 
+// * * 
+// * * 
+// * * 
 
 
 
-
-
-//        function for test purposes
-
-
-function createTestSprite(){
-      // img = loadImage("assets/cube_crack_front_00004.png");
-      testSprite = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);
-      testSprite.addAnimation("crack","assets/cube_back_transform_00001.png","assets/cube_back_transform_00010.png");
-      // testSprite.addImage("bruh",img);
-      // testSprite.changeImage("bruh");
-      testSprite.animation.frameDelay = 10;
-
-}
 
 
 function keyPressed() {
 
-
+  cubeSprite.forEach(s => s.scale = 1);
 
   switch (currentState) {
     case 1:
@@ -172,11 +177,17 @@ function keyPressed() {
       currentState = 2;
       break;
     case 2:
+      cubeSprite.forEach(s => s.scale = 0.7);
       playTransform();
       currentState = 3;
       break;
     case 3:
       playSpin();
+      currentState = 4;
+      break;
+
+    case 4:
+      playNeutral();
       currentState = 1;
       break;
     default:
@@ -188,23 +199,23 @@ function keyPressed() {
 }
 
 function playSpin() {
-  // * Set cubeSprite to spin
+// * Set cubeSprite to spin
 // * cubeSprite[0] back  => animation "spin"
-// * cubeSprite[1] heart => animation "nutral"
+// * cubeSprite[1] heart => animation "neutral"
 // * cubeSprite[2] front => animation "spin"
 
 cubeSprite[0].changeAnimation("spin");
 cubeSprite[0].animation.play();
-cubeSprite[1].changeAnimation("nutral");
+cubeSprite[1].changeAnimation("neutral");
 cubeSprite[2].changeAnimation ("spin");
 }
 
 
 
 function playCrack() {
-  // * Set cubeSprite to crack
+// * Set cubeSprite to crack
 // * cubeSprite[0] back  => image "cube_back_spin_000001.png"
-// * cubeSprite[1] heart => animation "nutral"
+// * cubeSprite[1] heart => animation "neutral"
 // * cubeSprite[2] front => animation "crack" frame delay 10
 
 cubeSprite[0].animation.stop();
@@ -215,7 +226,7 @@ cubeSprite[2].animation.frameDelay = 10
 
 function playTransform() {
 
-    // * Set cubeSprite to transform
+  // * Set cubeSprite to transform
   // * 
   // * cubeSprite[0] back  => animation "transform" noLoop
   // * cubeSprite[1] heart => animation "transform" noLoop
@@ -223,14 +234,38 @@ function playTransform() {
   // * 
   cubeSprite.forEach((sprite)=>{
     sprite.changeAnimation("transform");
-    sprite.animation.frameDelay = 10;
+    sprite.animation.frameDelay = 8;
   });
 }
 
-function playNutral(){
-  // TODO
+function playNeutral(){
+
+  // * Set cubeSprite to transform
+  // * 
+  // * cubeSprite[0] back  => animation "neutral" loop
+  // * cubeSprite[1] heart => animation "neutral" loop
+  // * cubeSprite[2] front => animation "neutral" loop
+  // * 
+  cubeSprite.forEach((sprite)=>{
+    sprite.changeAnimation("neutral");
+    sprite.animation.frameDelay = 4;
+  });
 }
 
 function playSqueeze(){
   // TODO
+}
+
+// * function for test purposes
+
+
+function createTestSprite(){
+  // img = loadImage("assets/cube_crack_front_00004.png");
+  testSprite = createSprite(canvasWidth/2 ,canvasHeight/2,300,300);
+  testSprite.addAnimation("crack","assets/cube_back_transform_00001.png","assets/cube_back_transform_00010.png");
+  // testSprite.addImage("bruh",img);
+  // testSprite.changeImage("bruh");
+  testSprite.animation.frameDelay = 10;
+  
+
 }
