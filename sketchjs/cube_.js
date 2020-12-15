@@ -1,3 +1,4 @@
+// this is old file
 
 // canvas information
 let canvasWidth = 1000;
@@ -9,6 +10,7 @@ let state = 1;
 let moveSpeed = 0.1;
 // mouse interaction
 let clickCount = 0,crack1Count = 10,crack2Count = 20,crack3Count = 30, crack4Count = 40;
+let transformCount = 50;
 let draggedSprite;
 let offsetX,offsetY;
 let isStopping = false,isStopped = false;
@@ -149,12 +151,7 @@ function preload(){
 
 
         clickCount++;
-        // if(clickCount == crack1Count){
-        //   playCrack1();
-        //  state = 2;
-        // } else {
-        //   // play clack
-        // }
+
 
         switch (clickCount) {
           case crack1Count:
@@ -171,7 +168,8 @@ function preload(){
           case crack4Count:
             playCrack4();
             break;
-        
+          case transformCount:
+            playTransform();
           default:
             break;
         }
