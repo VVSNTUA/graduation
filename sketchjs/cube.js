@@ -139,6 +139,14 @@ class Cube {
             sprite.changeAnimation("spin");
           });
           break;
+        case "stopping":
+          this.sprites.forEach(sprite => {
+            if(sprite.getAnimationLabel() == "spin"){
+              sprite.animation.goToFrame(0);
+            }
+          });
+          break;
+
         case "halt":
           this.sprites.forEach(sprite => {
             sprite.changeAnimation("neutral");
@@ -161,10 +169,12 @@ class Cube {
         case "transform" :
           this.sprites.forEach((sprite)=>{
             sprite.changeAnimation("transform");
+            sprite.animation.play();
             sprite.animation.frameDelay = 8;
           });
           break;
         default:
+          console.log(label);
           break;
       }
     }
