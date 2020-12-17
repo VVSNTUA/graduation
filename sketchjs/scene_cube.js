@@ -1,7 +1,7 @@
 function CubeScene() {
 
 
-     // take this in a local variable to allow easy access to
+    // take this in a local variable to allow easy access to
     // this instace from within local functions
     const me = this;
 
@@ -15,6 +15,8 @@ function CubeScene() {
     let transformCount = 50;
 
     this.setup = function (){
+      
+
     cubeSprite.sprites[0].onMousePressed = function(){
 
       if(draggedSprite == null && state != 3){
@@ -25,7 +27,7 @@ function CubeScene() {
 
       if (state == 1){
         cubeSprite.playAnimation("stopping");
-
+        // todo
         state = 2;
       }
 
@@ -69,22 +71,35 @@ function CubeScene() {
   }
 
     this.draw = function (){
+        camera.off();     //fix drift
         background(255,255,255); 
+
+   
 
 
         if(draggedSprite == cubeSprite){
-          cubeSprite.moveTo(mouseX,mouseY,0.3);
+          cubeSprite.moveTo(mouseX, mouseY, 0.3);
         }  else {
-          cubeSprite.moveTo(canvasWidth/2,canvasHeight/2,0.05);
+          cubeSprite.moveTo(width/2, height/2, 0.05);
         }
         cubeSprite.display();
-    
     }
 
 
     // local functions
 
     function goToDropletScene(){
-      me.sceneManager.showScene( DropletScene) ;
+      me.sceneManager.showScene( DropletScene ) ;
+      console.log(state);
+      init();
     }
+     function init(){
+       state = 1;
+       clickCount = 0;
+       cubeSprite.setPosition( width/2, 20);
+       cubeSprite.sprites.forEach( sprite => sprite.animation.play());
+       cubeSprite.playAnimation("spin");
+       cubeSprite.sprites[1].changeAnimation("neutral");
+     }
+
 }

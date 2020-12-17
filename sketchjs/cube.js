@@ -66,8 +66,8 @@ class Cube {
           ];
         this.sprites = (function(d){let newSpriteGroup = new Group();
 
-            let initX = canvasWidth/2;
-            let initY = 20;
+            let initX = 0;
+            let initY = 0;
             for( let i = 1; i <= d.length; i++){
               let c = d[i-1];
               let s = createSprite(initX ,initY,300,300);  // sub sprite 300*300
@@ -112,12 +112,20 @@ class Cube {
 
 
 
+
+
     // methods
 
     display(){
         drawSprites(this.sprites);
     }
 
+    setPosition(x,y) {
+      this.sprites.forEach( sprite => {
+        sprite.position.x = x;
+        sprite.position.y = y;
+    });
+    }
     moveTo(desX,desY,speed){
         this.sprites.forEach( sprite => {
             let speedX = (desX - sprite.position.x) * speed;
@@ -126,17 +134,16 @@ class Cube {
             sprite.position.y += speedY;
         });
     }
-    build(){
-
-    }
-    init(){}
 
     playAnimation(label){
 
       switch (label) {
         case "spin":
           this.sprites.forEach(sprite => {
+            sprite.animation.rewind();
+            sprite.animation.play();
             sprite.changeAnimation("spin");
+
           });
           break;
         case "stopping":
@@ -169,6 +176,7 @@ class Cube {
         case "transform" :
           this.sprites.forEach((sprite)=>{
             sprite.changeAnimation("transform");
+            sprite.animation.rewind();
             sprite.animation.play();
             sprite.animation.frameDelay = 8;
           });
@@ -178,7 +186,5 @@ class Cube {
           break;
       }
     }
-
-    onEvent(event,callback){}
 
 }
